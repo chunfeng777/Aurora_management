@@ -2,8 +2,11 @@
   <div class="shell">
     <aside class="sidebar" :class="{ collapsed }">
       <div class="brand">
-        <span class="brand-mark">A</span>
-        <div v-if="!collapsed"><strong>Aurora</strong><small>咨询管理中心</small></div>
+        <span class="brand-mark"><img :src="auroraMark" alt="" /></span>
+        <div v-if="!collapsed" class="brand-copy">
+          <img class="brand-logo" :src="auroraLogo" alt="Aurora" />
+          <small>咨询管理中心</small>
+        </div>
       </div>
       <nav class="nav">
         <RouterLink to="/dashboard" class="nav-item"><span class="nav-icon">⌁</span><span v-if="!collapsed">数据概览</span></RouterLink>
@@ -26,6 +29,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import auroraLogo from '@/assets/aurora-logo.svg'
+import auroraMark from '@/assets/aurora-mark.svg'
 
 const route = useRoute()
 const collapsed = ref(false)
@@ -36,8 +41,9 @@ const collapsed = ref(false)
 .sidebar { position: fixed; z-index: 10; display: flex; width: 244px; height: 100vh; flex-direction: column; color: #d8d7ef; background: #17162d; transition: width .25s ease; }
 .sidebar.collapsed { width: 82px; }
 .brand { display: flex; height: 82px; align-items: center; gap: 13px; padding: 0 22px; border-bottom: 1px solid rgba(255,255,255,.07); }
-.brand-mark { display: grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; border-radius: 13px; color: white; font-size: 22px; font-weight: 800; background: linear-gradient(145deg,#8b7cf8,#5b4bd9); box-shadow: 0 8px 22px rgba(108,92,231,.34); }
-.brand strong,.brand small { display: block; white-space: nowrap; }.brand strong { color: white; font-size: 18px; }.brand small { margin-top: 3px; color: #8885aa; font-size: 11px; }
+.brand-mark { display: grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; overflow: hidden; border: 1px solid rgba(255,255,255,.16); border-radius: 13px; color: white; background: linear-gradient(145deg,#91ddc0,#70c9a6); box-shadow: 0 8px 22px rgba(131,212,179,.24); }
+.brand-mark img { width: 22px; height: 22px; color: inherit; }
+.brand-copy,.brand-copy small { display: block; white-space: nowrap; }.brand-logo { display: block; width: 112px; height: 21px; object-fit: contain; }.brand-copy small { margin-top: 5px; color: #858fa1; font-size: 11px; letter-spacing: .08em; }
 .nav { display: flex; flex: 1; flex-direction: column; gap: 8px; padding: 24px 14px; }
 .nav-item { display: flex; height: 48px; align-items: center; gap: 13px; padding: 0 17px; border-radius: 12px; color: #aaa8c5; text-decoration: none; white-space: nowrap; transition: .2s; }
 .nav-item:hover { color: white; background: rgba(255,255,255,.06); }.nav-item.router-link-active { color: white; background: linear-gradient(90deg,rgba(108,92,231,.35),rgba(108,92,231,.12)); box-shadow: inset 3px 0 #8b7cf8; }

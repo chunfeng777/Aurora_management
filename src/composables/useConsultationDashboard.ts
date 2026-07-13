@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus'
 import { getConsultationPage } from '@/api/consultation'
 import type { ConsultationRecord } from '@/types/consultation'
 import type { DashboardChannelStat, DashboardMetric, DashboardRankingItem, DashboardTrendPoint, GrowthPeriod } from '@/types/dashboard'
-import { splitContactMethods } from '@/utils/consultationFormat'
+import { getLocalizedOptionTags, getLocationTags, splitContactMethods } from '@/utils/consultationFormat'
 import { getErrorMessage } from '@/utils/getErrorMessage'
 
 const channelDefinitions = [
@@ -49,11 +49,11 @@ export function useConsultationDashboard() {
   }))
 
   const topicStats = computed(() => createRanking(
-    consultations.value.flatMap((item) => item.explore.split(',').map((value) => value.trim()).filter(Boolean)),
+    consultations.value.flatMap((item) => getLocalizedOptionTags(item.explore, 'explore').map((option) => option.label)),
   ))
 
   const locationStats = computed(() => createRanking(
-    consultations.value.map((item) => item.currentLocation.trim()).filter(Boolean),
+    consultations.value.flatMap((item) => getLocationTags(item.currentLocation).map((location) => location.label)),
   ))
 
   const validCreateTimeCount = computed(() => consultations.value.filter(

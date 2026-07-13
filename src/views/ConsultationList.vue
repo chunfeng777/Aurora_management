@@ -36,12 +36,16 @@
         <el-table-column label="微信号" min-width="140">
           <template #default="scope">{{ scope.row.wechat || '-' }}</template>
         </el-table-column>
-        <el-table-column label="期望联系时间" min-width="160">
-          <template #default="scope">{{ scope.row.expectedContactTime || '-' }}</template>
+        <el-table-column label="期望联系时间" min-width="190">
+          <template #default="scope"><LocalizedOptionTags :value="scope.row.expectedContactTime" type="timeline" /></template>
         </el-table-column>
-        <el-table-column prop="explore" label="探索方向" min-width="130" show-overflow-tooltip />
+        <el-table-column label="探索方向" min-width="220">
+          <template #default="scope"><LocalizedOptionTags :value="scope.row.explore" type="explore" /></template>
+        </el-table-column>
         <el-table-column prop="message" label="情况说明" min-width="240" show-overflow-tooltip />
-        <el-table-column prop="currentLocation" label="当前所在地" min-width="130" show-overflow-tooltip />
+        <el-table-column label="当前所在地" min-width="240">
+          <template #default="scope"><LocationTags :value="scope.row.currentLocation" /></template>
+        </el-table-column>
         <el-table-column label="创建时间" width="150"><template #default="scope">{{ formatConsultationDate(scope.row.createTime) }}</template></el-table-column>
         <el-table-column label="操作" width="170" fixed="right">
           <template #default="scope">
@@ -76,6 +80,8 @@
 import { onMounted, ref } from 'vue'
 import ConsultationEditDialog from '@/components/consultation/ConsultationEditDialog.vue'
 import ContactMethodTags from '@/components/consultation/ContactMethodTags.vue'
+import LocationTags from '@/components/consultation/LocationTags.vue'
+import LocalizedOptionTags from '@/components/consultation/LocalizedOptionTags.vue'
 import { useConsultationList } from '@/composables/useConsultationList'
 import { formatConsultationDate } from '@/utils/consultationFormat'
 
