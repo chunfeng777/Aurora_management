@@ -1,0 +1,51 @@
+<template>
+  <div class="shell">
+    <aside class="sidebar" :class="{ collapsed }">
+      <div class="brand">
+        <span class="brand-mark">A</span>
+        <div v-if="!collapsed"><strong>Aurora</strong><small>咨询管理中心</small></div>
+      </div>
+      <nav class="nav">
+        <RouterLink to="/dashboard" class="nav-item"><span class="nav-icon">⌁</span><span v-if="!collapsed">数据概览</span></RouterLink>
+        <RouterLink to="/consultations" class="nav-item"><span class="nav-icon">▤</span><span v-if="!collapsed">咨询管理</span></RouterLink>
+      </nav>
+      <div class="sidebar-foot" v-if="!collapsed"><span class="live-dot"></span>系统运行正常</div>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar">
+        <button class="collapse-button" type="button" @click="collapsed = !collapsed">☰</button>
+        <div class="breadcrumb">工作台 <span>/</span> {{ route.meta.title }}</div>
+        <div class="profile"><div><strong>管理员</strong><small>Admin</small></div><span class="avatar">管</span></div>
+      </header>
+      <main class="content"><RouterView /></main>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const collapsed = ref(false)
+</script>
+
+<style scoped>
+.shell { display: flex; min-height: 100vh; }
+.sidebar { position: fixed; z-index: 10; display: flex; width: 244px; height: 100vh; flex-direction: column; color: #d8d7ef; background: #17162d; transition: width .25s ease; }
+.sidebar.collapsed { width: 82px; }
+.brand { display: flex; height: 82px; align-items: center; gap: 13px; padding: 0 22px; border-bottom: 1px solid rgba(255,255,255,.07); }
+.brand-mark { display: grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; border-radius: 13px; color: white; font-size: 22px; font-weight: 800; background: linear-gradient(145deg,#8b7cf8,#5b4bd9); box-shadow: 0 8px 22px rgba(108,92,231,.34); }
+.brand strong,.brand small { display: block; white-space: nowrap; }.brand strong { color: white; font-size: 18px; }.brand small { margin-top: 3px; color: #8885aa; font-size: 11px; }
+.nav { display: flex; flex: 1; flex-direction: column; gap: 8px; padding: 24px 14px; }
+.nav-item { display: flex; height: 48px; align-items: center; gap: 13px; padding: 0 17px; border-radius: 12px; color: #aaa8c5; text-decoration: none; white-space: nowrap; transition: .2s; }
+.nav-item:hover { color: white; background: rgba(255,255,255,.06); }.nav-item.router-link-active { color: white; background: linear-gradient(90deg,rgba(108,92,231,.35),rgba(108,92,231,.12)); box-shadow: inset 3px 0 #8b7cf8; }
+.nav-icon { width: 20px; font-size: 22px; text-align: center; }.sidebar-foot { padding: 22px; color: #8885aa; font-size: 12px; }.live-dot { display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: #00d2a0; box-shadow: 0 0 0 4px rgba(0,210,160,.1); }
+.main-area { width: calc(100% - 244px); min-height: 100vh; margin-left: 244px; transition: .25s; }.sidebar.collapsed + .main-area { width: calc(100% - 82px); margin-left: 82px; }
+.topbar { position: sticky; z-index: 8; top: 0; display: flex; height: 72px; align-items: center; padding: 0 30px; border-bottom: 1px solid #ececf3; background: rgba(255,255,255,.9); backdrop-filter: blur(16px); }
+.collapse-button { border: 0; color: #4f4d64; font-size: 20px; background: transparent; cursor: pointer; }.breadcrumb { margin-left: 22px; color: #656378; font-size: 14px; }.breadcrumb span { margin: 0 8px; color: #c2c0ce; }
+.profile { display: flex; align-items: center; gap: 11px; margin-left: auto; text-align: right; }.profile strong,.profile small { display: block; }.profile strong { color: #29273a; font-size: 13px; }.profile small { margin-top: 2px; color: #9b99aa; font-size: 11px; }.avatar { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 12px; color: #5f50d4; font-weight: 700; background: #eeebff; }
+.content { min-height: calc(100vh - 72px); padding: 30px; background: #f5f6fa; }
+@media (max-width: 760px) { .sidebar { width: 82px; }.sidebar .brand>div,.sidebar .nav-item span:last-child,.sidebar-foot { display: none; }.main-area,.sidebar.collapsed + .main-area { width: calc(100% - 82px); margin-left: 82px; }.content { padding: 18px; }.breadcrumb { display: none; } }
+</style>
