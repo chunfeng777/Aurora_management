@@ -2,7 +2,7 @@ import { computed, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getConsultationPage } from '@/api/consultation'
 import type { ConsultationRecord } from '@/types/consultation'
-import type { DashboardChannelStat, DashboardMetric, DashboardRankingItem } from '@/types/dashboard'
+import type { DashboardChannelStat, DashboardMetric, DashboardRankingItem, DashboardTrendPoint, GrowthPeriod } from '@/types/dashboard'
 import { splitContactMethods } from '@/utils/consultationFormat'
 import { getErrorMessage } from '@/utils/getErrorMessage'
 
@@ -17,6 +17,7 @@ export function useConsultationDashboard() {
   const loading = ref(false)
   const totalConsultations = ref(0)
   const consultations = ref<ConsultationRecord[]>([])
+  const growthPeriod = ref<GrowthPeriod>(7)
 
   const todayCount = computed(() => {
     const today = new Date().toDateString()
@@ -55,6 +56,17 @@ export function useConsultationDashboard() {
     consultations.value.map((item) => item.currentLocation.trim()).filter(Boolean),
   ))
 
+  const validCreateTimeCount = computed(() => consultations.value.filter(
+    (item) => item.createTime && !Number.isNaN(new Date(item.createTime).getTime()),
+  ).length)
+
+  const growthTrend = computed<DashboardTrendPoint[]>(() => createGrowthTrend(
+    consultations.value,
+    growthPeriod.value,
+  ))
+
+  const growthPeriodTotal = computed(() => growthTrend.value.reduce((sum, item) => sum + item.count, 0))
+
   async function refresh(): Promise<void> {
     loading.value = true
     try {
@@ -83,8 +95,48 @@ export function useConsultationDashboard() {
     channelStats,
     topicStats,
     locationStats,
+    growthPeriod,
+    growthTrend,
+    growthPeriodTotal,
+    validCreateTimeCount,
     refresh,
   }
+}
+
+function createGrowthTrend(records: ConsultationRecord[], days: GrowthPeriod): DashboardTrendPoint[] {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const points: DashboardTrendPoint[] = []
+  const pointMap = new Map<string, DashboardTrendPoint>()
+
+  for (let offset = days - 1; offset >= 0; offset -= 1) {
+    const date = new Date(today)
+    date.setDate(today.getDate() - offset)
+    const dateKey = toDateKey(date)
+    const point = {
+      date: dateKey,
+      label: `${date.getMonth() + 1}/${date.getDate()}`,
+      count: 0,
+    }
+    points.push(point)
+    pointMap.set(dateKey, point)
+  }
+
+  records.forEach((record) => {
+    if (!record.createTime) return
+    const createdAt = new Date(record.createTime)
+    if (Number.isNaN(createdAt.getTime())) return
+    const point = pointMap.get(toDateKey(createdAt))
+    if (point) point.count += 1
+  })
+
+  return points
+}
+
+function toDateKey(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${date.getFullYear()}-${month}-${day}`
 }
 
 function createRanking(values: string[]): DashboardRankingItem[] {

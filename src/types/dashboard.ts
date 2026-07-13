@@ -21,3 +21,11 @@ export interface DashboardMetric {
   background: string
 }
 export type DashboardMetricIcon = 'analytics' | 'calendar' | 'connection' | 'location'
+
+export type GrowthPeriod = 7 | 30 | 90
+
+export interface DashboardTrendPoint {
+  date: string
+  label: string
+  count: number
+}
