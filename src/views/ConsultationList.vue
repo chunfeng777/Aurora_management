@@ -9,7 +9,7 @@
         <el-input
           v-model="query.keywords"
           clearable
-          placeholder="搜索姓名、邮箱、微信或咨询内容"
+          placeholder="搜索名字"
           class="search"
           @keyup.enter="search"
           @clear="search"
